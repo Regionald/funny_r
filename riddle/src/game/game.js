@@ -28,17 +28,23 @@ const windowWidth = Dimensions.get('window').width;
 
 const Game = ({ navigation }) => {
 
+    const [showFirstPressable, setFirstPressable] = useState(false);
+    const [showSecondPressable, setShowSecondPressable] = useState(false);
+    const [showThrirdPressable, setShowThirdPressable] = useState(false);
     const [examData, setexamData] = useState([
         {
             "question": "An area of the production, distribution and trade, as well as consumption of goods and services.",
             "options": ["Economy", "Animal feed", "Environment", "Compost"],
-            "correct_answer": "Economy"
+            "correct_answer": "Economy",
+            "score": 0
 
         },
         {
             "question": "Natural process of recycling organic material to make fertilizer",
             "options": ["Animal feed", "Compost", "Environment", "3rd biggest country"],
-            "correct_answer": "Compost"
+            "correct_answer": "Compost",
+            "score": 0
+
         },
         {
             "question": "Food given to livestock",
@@ -48,17 +54,23 @@ const Game = ({ navigation }) => {
         {
             "question": "Natural world that involves livening and non-living things",
             "options": ["Methane ", "Animal feed", "3rd biggest country", "Environment"],
-            "correct_answer": "Environment"
+            "correct_answer": "Environment",
+            "score": 0
+
         },
         {
             "question": "Colourless, odourless invisible gas that affects the Earth’s temperature and climate system.",
             "options": ["Methane", "Animal feed", "3rd biggest country", "Environment"],
-            "correct_answer": "Methane"
+            "correct_answer": "Methane",
+            "score": 0
+
         },
         {
             "question": "Food waste",
             "options": ["Methane ", "Animal feed", "3rd biggest country", "Compost"],
-            "correct_answer": "3rd biggest country"
+            "correct_answer": "3rd biggest country",
+            "score": 0
+
         }
     ]);
 
@@ -68,12 +80,12 @@ const Game = ({ navigation }) => {
 
     const Mark = (option) => {
 
-        console.log('currentQuestionIndex',currentQuestionIndex);
+        console.log('currentQuestionIndex', currentQuestionIndex);
 
         const currentQuestion = examData[currentQuestionIndex];
         if (option === currentQuestion.correct_answer) {
             setScore(score + 1);
-       
+
         }
         else {
             setChances(chances - 1);
@@ -88,8 +100,31 @@ const Game = ({ navigation }) => {
         if (currentQuestionIndex + 1 < examData.length) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         }
-       
+
     };
+
+    useEffect(() => {
+
+
+        const genesitimeout = setTimeout(() => {
+            setFirstPressable(true);
+            console.log("Second box 7");
+        }, 1000);
+
+
+        const timeout = setTimeout(() => {
+            setShowSecondPressable(true);
+            console.log("Second box 7");
+        }, 2000);
+
+        const timeout1 = setTimeout(() => {
+            setShowThirdPressable(true),
+                console.log("Second box 7");
+        }, 3000);
+
+        return () => clearTimeout(timeout);
+
+    }, []);
 
     if (chances < 0) {
 
@@ -97,11 +132,11 @@ const Game = ({ navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false} >
 
                 <View onLayout={() => {
-                console.log('This has mounted')
-                setTimeout(() => {
-                    navigation.navigate('Home'); // Replace 'NextScreen' with the name of the screen you want to navigate to.
-                }, 1000);
-            }} style={styles.Gamelost}>
+                    console.log('This has mounted')
+                    setTimeout(() => {
+                        navigation.navigate('Home'); // Replace 'NextScreen' with the name of the screen you want to navigate to.
+                    }, 1000);
+                }} style={styles.Gamelost}>
 
                     <Text style={styles.SorryMsg}>Sorry</Text>
                     <Text style={styles.GameLost}>Game Lost</Text>
@@ -112,7 +147,7 @@ const Game = ({ navigation }) => {
 
     }
 
-   else if (score<5) {
+    else if (score < 5) {
         return <SafeAreaView >
             <ScrollView showsVerticalScrollIndicator={false} >
                 <View>
@@ -153,17 +188,24 @@ const Game = ({ navigation }) => {
 
                         {/* First row  */}
 
-                        <Pressable onPress={() => Mark(examData[currentQuestionIndex].options[0])} key={111} style={styles.color_cell_1}>
+                        {showFirstPressable && (<Pressable onPress={() => Mark(examData[currentQuestionIndex].options[0])} key={111} style={styles.color_cell_1}>
                             <Text>{examData[currentQuestionIndex].options[0]}</Text>
-                        </Pressable>
+                        </Pressable>)}
 
-                        <Pressable onPress={() => Mark((examData[currentQuestionIndex].options[1]))} key={112} style={styles.color_cell_2}>
-                            <Text>{examData[currentQuestionIndex].options[1]}</Text>
-                        </Pressable>
+                        {showSecondPressable && (
+                            <Pressable
+                                onPress={() => Mark(examData[currentQuestionIndex].options[1])}
+                                key={112}
+                                style={styles.color_cell_2}
+                            >
+                                <Text>{examData[currentQuestionIndex].options[1]}</Text>
+                            </Pressable>
+                        )}
 
-                        <Pressable onPress={() => Mark((examData[currentQuestionIndex].options[2]))} key={113} style={styles.color_cell_3}>
+                        {showThrirdPressable && (<Pressable onPress={() => Mark((examData[currentQuestionIndex].options[2]))} key={113} style={styles.color_cell_3}>
                             <Text>{examData[currentQuestionIndex].options[2]}</Text>
-                        </Pressable>
+                        </Pressable>)
+                        }
 
                     </View>
 
@@ -173,27 +215,27 @@ const Game = ({ navigation }) => {
             </ScrollView>
         </SafeAreaView>
     }
-    else{
+    else {
         return <SafeAreaView >
-        <ScrollView showsVerticalScrollIndicator={false} >
+            <ScrollView showsVerticalScrollIndicator={false} >
 
-            <View onLayout={() => {
-                console.log('This has mounted')
-                setTimeout(() => {
-                    navigation.navigate('Home'); // Replace 'NextScreen' with the name of the screen you want to navigate to.
-                }, 1000);
-            }} style={styles.GameWon}>
+                <View onLayout={() => {
+                    console.log('This has mounted')
+                    setTimeout(() => {
+                        navigation.navigate('Home'); // Replace 'NextScreen' with the name of the screen you want to navigate to.
+                    }, 1000);
+                }} style={styles.GameWon}>
 
-            <Text style={styles.SorryMsg}>5</Text>
+                    <Text style={styles.SorryMsg}>5</Text>
 
-                <Text style={styles.SorryMsg}>congratulations</Text>
-                <Text style={styles.GameLost}>You won</Text>
-            </View>
+                    <Text style={styles.SorryMsg}>congratulations</Text>
+                    <Text style={styles.GameLost}>You won</Text>
+                </View>
 
-        </ScrollView>
-    </SafeAreaView>
+            </ScrollView>
+        </SafeAreaView>
     }
-   
+
 
 };
 
@@ -213,7 +255,7 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 60,
     },
-    texter:{
+    texter: {
         fontSize: 22,
     },
     container: {
@@ -262,9 +304,9 @@ const styles = StyleSheet.create({
         display: 'flex',
         borderRadius: 11,
         height: windowHeight / 3,
-        width: windowWidth-12,
+        width: windowWidth - 12,
         marginLeft: 6,
-        padding:6,
+        padding: 6,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -277,7 +319,7 @@ const styles = StyleSheet.create({
         marginBottom: 6,
         marginRight: 6,
         height: windowWidth / 6,
-        width: windowWidth-12,
+        width: windowWidth - 12,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -290,7 +332,7 @@ const styles = StyleSheet.create({
         marginBottom: 6,
         marginRight: 6,
         height: windowWidth / 6,
-        width: windowWidth-12,
+        width: windowWidth - 12,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -303,7 +345,7 @@ const styles = StyleSheet.create({
         marginBottom: 6,
         marginRight: 6,
         height: windowWidth / 6,
-        width: windowWidth-12,
+        width: windowWidth - 12,
         justifyContent: 'center',
         alignItems: 'center',
     },
