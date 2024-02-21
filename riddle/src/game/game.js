@@ -11,7 +11,10 @@ import {
     Dimensions,
     ScrollView,
 } from 'react-native';
-// import { Colors, Fonts, windowHeight, windowWidth } from '../../utils/util';
+
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
+
 
 var Colors = {
     "Default": "#81b71a",
@@ -22,57 +25,88 @@ var Colors = {
     "Yellow": "#F6BB42",
 };
 
-const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
-
 
 const Game = ({ navigation }) => {
 
+    const [fontsLoaded, setFontsLoaded] = useState(false);
     const [showFirstPressable, setFirstPressable] = useState(false);
     const [showSecondPressable, setShowSecondPressable] = useState(false);
     const [showThrirdPressable, setShowThirdPressable] = useState(false);
+    const [level, Setlevel] = useState(0)
     const [examData, setexamData] = useState([
         {
-            "question": "An area of the production, distribution and trade, as well as consumption of goods and services.",
-            "options": ["Economy", "Animal feed", "Environment", "Compost"],
-            "correct_answer": "Economy",
-            "score": 0
-
+            'level': 0,
+            'content': [{
+                "question": "An area of the production, distribution and trade, as well as consumption of goods and services.",
+                "options": ["Economy", "Animal feed", "Environment", "Compost"],
+                "correct_answer": "Economy",
+            },
+            {
+                "question": "Natural process of recycling organic material to make fertilizer",
+                "options": ["Animal feed", "Compost", "Environment", "3rd biggest country"],
+                "correct_answer": "Compost",
+            },
+            {
+                "question": "Food given to livestock",
+                "options": ["Methane ", "Animal feed", "Environment", "3rd biggest country"],
+                "correct_answer": "Animal feed"
+            },
+            {
+                "question": "Natural world that involves livening and non-living things",
+                "options": ["Methane ", "Animal feed", "3rd biggest country", "Environment"],
+                "correct_answer": "Environment",
+            },
+            {
+                "question": "Colourless, odourless invisible gas that affects the Earth’s temperature and climate system.",
+                "options": ["Methane", "Animal feed", "3rd biggest country", "Environment"],
+                "correct_answer": "Methane",
+            },
+            {
+                "question": "Food waste",
+                "options": ["Methane ", "Animal feed", "3rd biggest country", "Compost"],
+                "correct_answer": "3rd biggest country",
+            }]
         },
         {
-            "question": "Natural process of recycling organic material to make fertilizer",
-            "options": ["Animal feed", "Compost", "Environment", "3rd biggest country"],
-            "correct_answer": "Compost",
-            "score": 0
+            'level': 1,
+            'content': [{
+                "question": "An area of the production, distribution and trade, as well as consumption of goods and services.",
+                "options": ["Economy", "Animal feed", "Environment", "Compost"],
+                "correct_answer": "Economy",
 
-        },
-        {
-            "question": "Food given to livestock",
-            "options": ["Methane ", "Animal feed", "Environment", "3rd biggest country"],
-            "correct_answer": "Animal feed"
-        },
-        {
-            "question": "Natural world that involves livening and non-living things",
-            "options": ["Methane ", "Animal feed", "3rd biggest country", "Environment"],
-            "correct_answer": "Environment",
-            "score": 0
+            },
+            {
+                "question": "Natural process of recycling organic material to make fertilizer",
+                "options": ["Animal feed", "Compost", "Environment", "3rd biggest country"],
+                "correct_answer": "Compost",
 
-        },
-        {
-            "question": "Colourless, odourless invisible gas that affects the Earth’s temperature and climate system.",
-            "options": ["Methane", "Animal feed", "3rd biggest country", "Environment"],
-            "correct_answer": "Methane",
-            "score": 0
+            },
+            {
+                "question": "Food given to livestock",
+                "options": ["Methane ", "Animal feed", "Environment", "3rd biggest country"],
+                "correct_answer": "Animal feed"
+            },
+            {
+                "question": "Natural world that involves livening and non-living things",
+                "options": ["Methane ", "Animal feed", "3rd biggest country", "Environment"],
+                "correct_answer": "Environment",
 
-        },
-        {
-            "question": "Food waste",
-            "options": ["Methane ", "Animal feed", "3rd biggest country", "Compost"],
-            "correct_answer": "3rd biggest country",
-            "score": 0
+            },
+            {
+                "question": "Colourless, odourless invisible gas that affects the Earth’s temperature and climate system.",
+                "options": ["Methane", "Animal feed", "3rd biggest country", "Environment"],
+                "correct_answer": "Methane",
 
-        }
+            },
+            {
+                "question": "Food waste",
+                "options": ["Methane ", "Animal feed", "3rd biggest country", "Compost"],
+                "correct_answer": "3rd biggest country",
+
+            }]
+        },
     ]);
+
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
@@ -80,11 +114,17 @@ const Game = ({ navigation }) => {
 
     const Mark = (option) => {
 
-        console.log('currentQuestionIndex', currentQuestionIndex);
 
         const currentQuestion = examData[currentQuestionIndex];
         if (option === currentQuestion.correct_answer) {
             setScore(score + 1);
+            const new_examDate = [...examData];
+
+            setFirstPressable(false);
+            setShowSecondPressable(false);
+            setShowThirdPressable(false);
+            new_examDate[currentQuestionIndex].score = score;
+            setexamData(new_examDate);
 
         }
         else {
@@ -103,8 +143,8 @@ const Game = ({ navigation }) => {
 
     };
 
-    useEffect(() => {
 
+    useEffect(() => {
 
         const genesitimeout = setTimeout(() => {
             setFirstPressable(true);
@@ -122,119 +162,140 @@ const Game = ({ navigation }) => {
                 console.log("Second box 7");
         }, 3000);
 
-        return () => clearTimeout(timeout);
+        return () => {
+            clearTimeout(genesitimeout);
+            clearTimeout(timeout);
+            clearTimeout(timeout1);
+        };
 
-    }, []);
+    }, [examData]);
 
-    if (chances < 0) {
 
-        return <SafeAreaView >
-            <ScrollView showsVerticalScrollIndicator={false} >
 
-                <View onLayout={() => {
-                    console.log('This has mounted')
-                    setTimeout(() => {
-                        navigation.navigate('Home'); // Replace 'NextScreen' with the name of the screen you want to navigate to.
-                    }, 1000);
-                }} style={styles.Gamelost}>
+    if (!fontsLoaded) {
 
-                    <Text style={styles.SorryMsg}>Sorry</Text>
-                    <Text style={styles.GameLost}>Game Lost</Text>
-                </View>
+        if (chances < 0) {
 
-            </ScrollView>
-        </SafeAreaView>
+            return <SafeAreaView >
+                <ScrollView showsVerticalScrollIndicator={false} >
 
-    }
+                    <View onLayout={() => {
+                        setTimeout(() => {
+                            navigation.navigate('Home'); // Replace 'NextScreen' with the name of the screen you want to navigate to.
+                        }, 1000);
+                    }} style={styles.Gamelost}>
 
-    else if (score < 5) {
-        return <SafeAreaView >
-            <ScrollView showsVerticalScrollIndicator={false} >
-                <View>
+                        <Text style={styles.SorryMsg}>Sorry</Text>
+                        <Text style={styles.GameLost}>Game Lost</Text>
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+
+        }
+
+        else if (score < 5) {
+
+            return <SafeAreaView >
+                <ScrollView showsVerticalScrollIndicator={false} >
                     <View>
+                        <View>
 
-                        <StatusBar
-                            statusbarStyle='light-content'
-                            backgroundColor={Colors.Primary}
-                        />
+                            <StatusBar
+                                statusbarStyle='light-content'
+                                backgroundColor={Colors.Primary}
+                            />
 
-                    </View>
-                    <View style={styles.GameInfo}>
+                        </View>
+                        <View style={styles.GameInfo}>
 
-                        <Text style={styles.GameTxt}>Funny Riddle</Text>
-                    </View>
+                            <Text style={styles.GameTxt}>ANCIENT RIDDLES</Text>
+                        </View>
 
-                    <View style={styles.points}>
-                        <Text style={styles.texter}>Chances:{chances}</Text>
-                        <Text style={styles.texter}>Points:{score}</Text>
-                    </View>
-                    {/* First row anagram */}
+                        <View style={styles.points}>
+                            <Text style={styles.texter}>Chances:<Text style={{ fontFamily: 'Nine' }} >{chances}</Text></Text>
+                            <Text style={styles.texter}>Points:<Text>{score}</Text></Text>
+                        </View>
+                      
+                        <View style={styles.container}>
 
-                    <View style={styles.container}>
+                            {/* First row  */}
 
-                        {/* First row  */}
-
-                        <Pressable key={111} style={styles.color_cell}>
-                            <Text style={styles.question}>{examData[currentQuestionIndex].question}</Text>
-                        </Pressable>
-
-
-                    </View>
-                    <Text>
-                        {"\n"}
-                    </Text>
-
-                    <View style={styles.container}>
-
-                        {/* First row  */}
-
-                        {showFirstPressable && (<Pressable onPress={() => Mark(examData[currentQuestionIndex].options[0])} key={111} style={styles.color_cell_1}>
-                            <Text>{examData[currentQuestionIndex].options[0]}</Text>
-                        </Pressable>)}
-
-                        {showSecondPressable && (
-                            <Pressable
-                                onPress={() => Mark(examData[currentQuestionIndex].options[1])}
-                                key={112}
-                                style={styles.color_cell_2}
-                            >
-                                <Text>{examData[currentQuestionIndex].options[1]}</Text>
+                            <Pressable key={111} style={styles.color_cell}>
+                                <Text style={styles.question}>{examData[level]['content'][currentQuestionIndex].question}</Text>
                             </Pressable>
-                        )}
 
-                        {showThrirdPressable && (<Pressable onPress={() => Mark((examData[currentQuestionIndex].options[2]))} key={113} style={styles.color_cell_3}>
-                            <Text>{examData[currentQuestionIndex].options[2]}</Text>
-                        </Pressable>)
-                        }
 
+                        </View>
+                        <Text>
+                            {"\n"}
+                        </Text>
+
+                        <View style={styles.container}>
+
+
+                            {showFirstPressable && (
+                                <Pressable
+                                    onPress={() =>
+                                        Mark(examData[level]['content'][currentQuestionIndex].options[0])
+                                    }
+                                    key={111}
+                                    style={styles.color_cell_1}>
+                                    <Text style={styles.option_Text}>{examData[level]['content'][currentQuestionIndex]['options'][0]}</Text>
+                                </Pressable>)}
+
+                            {showSecondPressable && (
+                                <Pressable
+                                    onPress={() =>
+                                        Mark(examData[level]['content'][currentQuestionIndex].options[1])
+                                    }
+                                    key={112}
+                                    style={[styles.color_cell_2]}
+                                >
+                                    <Text style={styles.option_Text}>{examData[level]['content'][currentQuestionIndex].options[1]}</Text>
+                                </Pressable>
+                            )}
+
+                            {showThrirdPressable && (
+                                <Pressable
+                                    onPress={() =>
+                                        Mark((examData[level]['content'][currentQuestionIndex].options[2]))
+                                    }
+                                    key={113}
+                                    style={styles.color_cell_3}>
+                                    <Text style={styles.option_Text}>{examData[level]['content'][currentQuestionIndex].options[2]}</Text>
+                                </Pressable>)
+                            }
+
+                        </View>
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        }
+        else {
+            return <SafeAreaView >
+                <ScrollView showsVerticalScrollIndicator={false} >
+
+                    <View onLayout={() => {
+                        console.log('This has mounted')
+                        setTimeout(() => {
+                            navigation.navigate('Home'); // Replace 'NextScreen' with the name of the screen you want to navigate to.
+                        }, 1000);
+                    }} style={styles.GameWon}>
+
+                        <Text style={styles.SorryMsg}>5</Text>
+
+                        <Text style={styles.SorryMsg}>congratulations</Text>
+                        <Text style={styles.GameLost}>You won</Text>
                     </View>
 
-
-
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+                </ScrollView>
+            </SafeAreaView>
+        }
     }
-    else {
-        return <SafeAreaView >
-            <ScrollView showsVerticalScrollIndicator={false} >
+    else (
 
-                <View onLayout={() => {
-                    console.log('This has mounted')
-                    setTimeout(() => {
-                        navigation.navigate('Home'); // Replace 'NextScreen' with the name of the screen you want to navigate to.
-                    }, 1000);
-                }} style={styles.GameWon}>
-
-                    <Text style={styles.SorryMsg}>5</Text>
-
-                    <Text style={styles.SorryMsg}>congratulations</Text>
-                    <Text style={styles.GameLost}>You won</Text>
-                </View>
-
-            </ScrollView>
-        </SafeAreaView>
-    }
+        console.log('Font not loaded')
+    )
 
 
 };
@@ -255,8 +316,17 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 60,
     },
+
+    option_Text:{
+
+
+        fontSize: 22,
+        fontFamily: 'Assassin',
+
+    },
     texter: {
         fontSize: 22,
+        fontFamily: 'Assassin',
     },
     container: {
         width: windowWidth,
@@ -292,10 +362,14 @@ const styles = StyleSheet.create({
     ,
     GameTxt: {
         fontSize: 25,
+        fontFamily: 'Assassin',
+        color: '#37BC9B',
+        fontWeight: '600',
 
     },
     question: {
-        fontSize: 20,
+        fontSize: 25,
+        fontFamily: 'Nine',
 
     },
     color_cell: {
@@ -309,6 +383,7 @@ const styles = StyleSheet.create({
         padding: 6,
         justifyContent: 'center',
         alignItems: 'center',
+
     },
 
     color_cell_1: {
@@ -322,6 +397,8 @@ const styles = StyleSheet.create({
         width: windowWidth - 12,
         justifyContent: 'center',
         alignItems: 'center',
+        fontSize: 40,
+
     },
 
     color_cell_2: {
@@ -335,6 +412,7 @@ const styles = StyleSheet.create({
         width: windowWidth - 12,
         justifyContent: 'center',
         alignItems: 'center',
+
     },
 
     color_cell_3: {
