@@ -11,6 +11,7 @@ import {
     Dimensions,
     ScrollView,
 } from 'react-native';
+import ExamDataContext from './data';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -28,85 +29,15 @@ var Colors = {
 
 const Game = ({ navigation }) => {
 
+    const { examData, setexamData,level,setLevel} = useContext(ExamDataContext);
+
+
     const [fontsLoaded, setFontsLoaded] = useState(false);
     const [showFirstPressable, setFirstPressable] = useState(false);
     const [showSecondPressable, setShowSecondPressable] = useState(false);
     const [showThrirdPressable, setShowThirdPressable] = useState(false);
-    const [level, Setlevel] = useState(0)
-    const [examData, setexamData] = useState([
-        {
-            'level': 0,
-            'content': [{
-                "question": "An area of the production, distribution and trade, as well as consumption of goods and services.",
-                "options": ["Economy", "Animal feed", "Environment", "Compost"],
-                "correct_answer": "Economy",
-            },
-            {
-                "question": "Natural process of recycling organic material to make fertilizer",
-                "options": ["Animal feed", "Compost", "Environment", "3rd biggest country"],
-                "correct_answer": "Compost",
-            },
-            {
-                "question": "Food given to livestock",
-                "options": ["Methane ", "Animal feed", "Environment", "3rd biggest country"],
-                "correct_answer": "Animal feed"
-            },
-            {
-                "question": "Natural world that involves livening and non-living things",
-                "options": ["Methane ", "Animal feed", "3rd biggest country", "Environment"],
-                "correct_answer": "Environment",
-            },
-            {
-                "question": "Colourless, odourless invisible gas that affects the Earth’s temperature and climate system.",
-                "options": ["Methane", "Animal feed", "3rd biggest country", "Environment"],
-                "correct_answer": "Methane",
-            },
-            {
-                "question": "Food waste",
-                "options": ["Methane ", "Animal feed", "3rd biggest country", "Compost"],
-                "correct_answer": "3rd biggest country",
-            }]
-        },
-        {
-            'level': 1,
-            'content': [{
-                "question": "An area of the production, distribution and trade, as well as consumption of goods and services.",
-                "options": ["Economy", "Animal feed", "Environment", "Compost"],
-                "correct_answer": "Economy",
-
-            },
-            {
-                "question": "Natural process of recycling organic material to make fertilizer",
-                "options": ["Animal feed", "Compost", "Environment", "3rd biggest country"],
-                "correct_answer": "Compost",
-
-            },
-            {
-                "question": "Food given to livestock",
-                "options": ["Methane ", "Animal feed", "Environment", "3rd biggest country"],
-                "correct_answer": "Animal feed"
-            },
-            {
-                "question": "Natural world that involves livening and non-living things",
-                "options": ["Methane ", "Animal feed", "3rd biggest country", "Environment"],
-                "correct_answer": "Environment",
-
-            },
-            {
-                "question": "Colourless, odourless invisible gas that affects the Earth’s temperature and climate system.",
-                "options": ["Methane", "Animal feed", "3rd biggest country", "Environment"],
-                "correct_answer": "Methane",
-
-            },
-            {
-                "question": "Food waste",
-                "options": ["Methane ", "Animal feed", "3rd biggest country", "Compost"],
-                "correct_answer": "3rd biggest country",
-
-            }]
-        },
-    ]);
-
+   
+   
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
@@ -114,13 +45,27 @@ const Game = ({ navigation }) => {
 
     const Mark = (option) => {
 
+        console.log(option);
+        
 
-        const currentQuestion = examData[currentQuestionIndex];
-        if (option === currentQuestion.correct_answer) {
+
+        const currentQuestion = examData[level]['content'][currentQuestionIndex].correct_answer;
+        console.log(currentQuestion)
+
+        if (option === currentQuestion) {
             setScore(score + 1);
             const new_examDate = [...examData];
 
+            console.log('The is inside the marking function');
+            console.log('upper',showFirstPressable);
+
+
             setFirstPressable(false);
+
+
+            console.log('lower',showFirstPressable);
+
+
             setShowSecondPressable(false);
             setShowThirdPressable(false);
             new_examDate[currentQuestionIndex].score = score;
@@ -137,6 +82,7 @@ const Game = ({ navigation }) => {
     const nextQuestion = () => {
 
         console.log(currentQuestionIndex)
+
         if (currentQuestionIndex + 1 < examData.length) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         }
@@ -149,18 +95,18 @@ const Game = ({ navigation }) => {
         const genesitimeout = setTimeout(() => {
             setFirstPressable(true);
             console.log("Second box 7");
-        }, 1000);
+        }, 500);
 
 
         const timeout = setTimeout(() => {
             setShowSecondPressable(true);
             console.log("Second box 7");
-        }, 2000);
+        }, 800);
 
         const timeout1 = setTimeout(() => {
             setShowThirdPressable(true),
                 console.log("Second box 7");
-        }, 3000);
+        }, 1000);
 
         return () => {
             clearTimeout(genesitimeout);
@@ -169,10 +115,6 @@ const Game = ({ navigation }) => {
         };
 
     }, [examData]);
-
-
-
-    if (!fontsLoaded) {
 
         if (chances < 0) {
 
@@ -212,7 +154,7 @@ const Game = ({ navigation }) => {
                         </View>
 
                         <View style={styles.points}>
-                            <Text style={styles.texter}>Chances:<Text style={{ fontFamily: 'Nine' }} >{chances}</Text></Text>
+                            <Text style={styles.texter}>Chances:<Text style={{ fontFamily: 'Nine' }} >{""}{chances}</Text></Text>
                             <Text style={styles.texter}>Points:<Text>{score}</Text></Text>
                         </View>
                       
@@ -291,12 +233,7 @@ const Game = ({ navigation }) => {
                 </ScrollView>
             </SafeAreaView>
         }
-    }
-    else (
-
-        console.log('Font not loaded')
-    )
-
+    
 
 };
 
@@ -305,7 +242,7 @@ export default Game;
 
 const styles = StyleSheet.create({
     body: {
-        backgroundColor: '#f4f3ee',
+        backgroundColor: '#ecf39e',
         display: 'flex',
         padding: 0,
         margin: 0,
@@ -321,7 +258,7 @@ const styles = StyleSheet.create({
 
 
         fontSize: 22,
-        fontFamily: 'Assassin',
+        fontFamily: 'Recoleta',
 
     },
     texter: {
@@ -331,7 +268,7 @@ const styles = StyleSheet.create({
     container: {
         width: windowWidth,
         // margin: 1,
-        backgroundColor: '#ffd166',
+        // backgroundColor: '#ffd166',
         flexDirection: 'row',
         flexWrap: 'wrap',
     },
@@ -369,12 +306,11 @@ const styles = StyleSheet.create({
     },
     question: {
         fontSize: 25,
-        fontFamily: 'Nine',
+        fontFamily: 'Recoleta',
 
     },
     color_cell: {
-
-        backgroundColor: '#37BC9B',
+        backgroundColor: '#95d5b2',
         display: 'flex',
         borderRadius: 11,
         height: windowHeight / 3,
@@ -387,7 +323,7 @@ const styles = StyleSheet.create({
     },
 
     color_cell_1: {
-        backgroundColor: '#37BC9B',
+        backgroundColor: '#6a994e',
         display: 'flex',
         borderRadius: 11,
         marginLeft: 6,
@@ -402,7 +338,7 @@ const styles = StyleSheet.create({
     },
 
     color_cell_2: {
-        backgroundColor: '#37BC9B',
+        backgroundColor: '#90a955',
         display: 'flex',
         borderRadius: 11,
         marginLeft: 6,
@@ -416,7 +352,7 @@ const styles = StyleSheet.create({
     },
 
     color_cell_3: {
-        backgroundColor: '#37BC9B',
+        backgroundColor: '#a7c957',
         display: 'flex',
         borderRadius: 11,
         marginLeft: 6,
